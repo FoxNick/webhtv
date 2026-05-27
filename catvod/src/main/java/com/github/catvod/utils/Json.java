@@ -87,6 +87,16 @@ public class Json {
     }
 
     public static Map<String, String> toMap(String json) {
+        if (!isObj(json)) {
+            //body的表单数据一定要在这里处理直接返回Map 并且使用IdentityHashMap可以保证相同key并存
+            String regEx = "(\\?|&+)(.+?)=([^&]*)";
+            Pattern p = Pattern.compile(regEx);
+            Matcher m = p.matcher("?" + json);
+            Map<String, String> paramMap = new IdentityHashMap<>();
+            while (m.find())
+                paramMap.put(m.group(2), m.group(3));
+            return paramMap;
+        }
         return TextUtils.isEmpty(json) ? null : toMap(parse(json));
     }
 
