@@ -30,9 +30,17 @@ public class Req {
     private JsonElement data;
     @SerializedName("headers")
     private JsonElement headers;
+    @SerializedName("rejectCoding")
+    private Boolean rejectCoding;
 
     public static Req objectFrom(String json) {
-        return new Gson().fromJson(json, Req.class);
+        Req req = new Gson().fromJson(json, Req.class);
+        if (req.data != null) req.body = req.data.isJsonObject() ? req.data.getAsJsonObject().toString() : req.data.getAsString();
+        return req;
+    }
+    
+    public boolean isRejectCoding() {
+        return rejectCoding != null && rejectCoding;
     }
 
     public int getBuffer() {
